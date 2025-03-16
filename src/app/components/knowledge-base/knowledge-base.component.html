@@ -1,0 +1,150 @@
+<div class="container my-4">
+  <h1 class="mb-4">{{ currentFramework === 'angular' ? 'Angular' : 'React' }} Knowledge Base</h1>
+  
+  <div class="row mb-4" *ngIf="!selectedArticle">
+    <div class="col-md-6">
+      <div class="input-group">
+        <input type="text" class="form-control" 
+               [(ngModel)]="searchQuery" 
+               placeholder="Search articles...">
+        <button class="btn btn-primary" (click)="search()">
+          <i class="bi bi-search"></i> Search
+        </button>
+      </div>
+    </div>
+    <div class="col-md-6 text-end">
+      <button class="btn btn-outline-secondary me-2" 
+              (click)="clearFilters()" 
+              *ngIf="selectedCategory || selectedTag || searchQuery">
+        <i class="bi bi-x-circle"></i> Clear Filters
+      </button>
+      
+      <div class="btn-group">
+        <button class="btn btn-outline-primary dropdown-toggle" 
+                type="button" 
+                data-bs-toggle="dropdown">
+          {{ selectedCategory ? selectedCategory : 'Filter by Category' }}
+        </button>
+        <ul class="dropdown-menu">
+          <li *ngFor="let category of categories">
+            <a class="dropdown-item" 
+               (click)="filterByCategory(category)" 
+               href="javascript:void(0)">
+              {{ category }}
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="btn-group ms-2">
+        <button class="btn btn-outline-info dropdown-toggle" 
+                type="button" 
+                data-bs-toggle="dropdown">
+          {{ selectedTag ? selectedTag : 'Filter by Tag' }}
+        </button>
+        <ul class="dropdown-menu">
+          <li *ngFor="let tag of tags">
+            <a class="dropdown-item" 
+               (click)="filterByTag(tag)" 
+               href="javascript:void(0)">
+              {{ tag }}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row" *ngIf="!selectedArticle">
+    <div class="col-12">
+      <div class="list-group">
+        <div class="list-group-item list-group-item-action" 
+             *ngFor="let article of filteredArticles" 
+             (click)="viewArticle(article)">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ article.title }}</h5>
+            <small>{{ article.createdAt | date }}</small>
+          </div>
+          <p class="mb-1">
+            <span class="badge bg-primary me-1">{{ article.category }}</span>
+            <span class="badge bg-secondary me-1" *ngFor="let tag of article.tags.slice(0, 3)">
+              {{ tag }}
+            </span>
+            <span class="badge bg-secondary" *ngIf="article.tags.length > 3">
+              +{{ article.tags.length - 3 }} more
+            </span>
+          </p>
+        </div>
+      </div>
+      
+      <div class="alert alert-info mt-3" *ngIf="filteredArticles.length === 0">
+        No articles found matching your criteria. Try clearing filters or searching for something else.
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="selectedArticle">
+    <div class="mb-3">
+      <button class="btn btn-outline-secondary" (click)="backToList()">
+        <i class="bi bi-arrow-left"></i> Back to Articles
+      </button>
+    </div>
+    
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h2>{{ selectedArticle.title }}</h2>
+        <small>{{ selectedArticle.createdAt | date }}</small>
+      </div>
+      
+      <div class="card-body">
+        <p>
+          <span class="badge bg-primary me-1">{{ selectedArticle.category }}</span>
+          <span class="badge bg-secondary me-1" *ngFor="let tag of selectedArticle.tags">
+            {{ tag }}
+          </span>
+        </p>
+        
+        <div class="content mb-4" [innerHTML]="selectedArticle.content"></div>
+        
+        <div class="mt-4" *ngIf="selectedArticle.codeExamples && selectedArticle.codeExamples.length > 0">
+          <h3>Code Examples</h3>
+          
+          <div class="accordion" id="codeExamples">
+            <div class="accordion-item" *ngFor="let example of selectedArticle.codeExamples; let i = index">
+              <h2 class="accordion-header">
+                <button class="accordion-button" 
+                        type="button" 
+                        data-bs-toggle="collapse" 
+                        [attr.data-bs-target]="'#codeExample' + i" 
+                        [class.collapsed]="i !== 0" 
+                        [attr.aria-expanded]="i === 0 ? 'true' : 'false'" 
+                        [attr.aria-controls]="'codeExample' + i">
+                  {{ example.title }}
+                </button>
+              </h2>
+              <div [id]="'codeExample' + i" 
+                   class="accordion-collapse collapse" 
+                   [class.show]="i === 0" 
+                   data-bs-parent="#codeExamples">
+                <div class="accordion-body">
+                  <pre class="bg-light p-3"><code>{{ example.code }}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-4" *ngIf="selectedArticle.relatedLinks && selectedArticle.relatedLinks.length > 0">
+          <h3>Related Resources</h3>
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let link of selectedArticle.relatedLinks">
+              <a [href]="link.url" target="_blank">
+                {{ link.title }} <i class="bi bi-box-arrow-up-right ms-1"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

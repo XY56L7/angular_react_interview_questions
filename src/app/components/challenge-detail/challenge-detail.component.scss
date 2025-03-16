@@ -1,0 +1,25 @@
+.tab-content {
+  min-height: 400px;
+}
+
+.code-container {
+  max-height: 500px;
+  overflow-y: auto;
+  font-family: monospace;
+}
+
+pre {
+  margin-bottom: 0;
+}
+
+.nav-link {
+  cursor: pointer;
+}
+
+.list-group-item {
+  transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+}

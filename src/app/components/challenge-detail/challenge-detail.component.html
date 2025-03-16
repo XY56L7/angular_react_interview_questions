@@ -1,0 +1,252 @@
+<div class="container my-4 px-2 px-md-3" *ngIf="!isLoading && !hasError && challenge">
+  <div class="row mb-3">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-2">
+        <h1 class="mb-2 mb-md-0 fs-3 fs-md-2">{{challenge.title}}</h1>
+        <div class="d-flex">
+          <span class="badge rounded-pill me-2 {{getDifficultyBadgeClass(challenge.difficulty)}}">
+            {{challenge.difficulty === 'easy' ? 'Easy' : challenge.difficulty === 'medium' ? 'Medium' : 'Hard'}}
+          </span>
+          <span class="badge bg-secondary">{{challenge.bugType}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="nav-tabs-wrapper overflow-auto mb-2">
+        <ul class="nav nav-tabs nav-fill">
+          <li class="nav-item">
+            <a class="nav-link px-2 px-md-3" [class.active]="activeTab === 'description'" (click)="setActiveTab('description')" href="javascript:void(0)">
+              <i class="bi bi-info-circle me-1"></i> <span class="d-none d-sm-inline">Task</span><span class="d-inline d-sm-none">Info</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-2 px-md-3" [class.active]="activeTab === 'code'" (click)="setActiveTab('code')" href="javascript:void(0)">
+              <i class="bi bi-code-slash me-1"></i> <span>Code</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-2 px-md-3" [class.active]="activeTab === 'hints'" (click)="setActiveTab('hints')" href="javascript:void(0)">
+              <i class="bi bi-lightbulb me-1"></i> <span>Hints</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-2 px-md-3" [class.active]="activeTab === 'answers'" (click)="setActiveTab('answers')" href="javascript:void(0)">
+              <i class="bi bi-question-circle me-1"></i> <span class="d-none d-sm-inline">Options</span><span class="d-inline d-sm-none">Answer</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-2 px-md-3" [class.active]="activeTab === 'solution'" (click)="setActiveTab('solution')" href="javascript:void(0)">
+              <i class="bi bi-check-circle me-1"></i> <span>Solution</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-12">
+      <!-- Task tab -->
+      <div *ngIf="activeTab === 'description'" class="tab-content p-3 bg-light rounded">
+        <h3 class="fs-4">Task Description</h3>
+        <p class="lead">{{challenge.description}}</p>
+        <div class="mt-3">
+          <button class="btn btn-primary me-2 mb-2" (click)="setActiveTab('code')">
+            <i class="bi bi-code-slash me-1"></i> View Code
+          </button>
+        </div>
+      </div>
+
+      <!-- Code tab -->
+      <div *ngIf="activeTab === 'code'" class="tab-content p-3 bg-light rounded">
+        <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+          <h3 class="mb-2 mb-md-0 fs-4">Code Files</h3>
+          <div class="btn-group btn-group-sm d-flex flex-wrap">
+            @for (file of files; track file) {
+              <button 
+                class="btn mb-1 me-1" 
+                [class.btn-primary]="activeFile === file"
+                [class.btn-outline-primary]="activeFile !== file"
+                (click)="setActiveFile(file)">
+                {{file}}
+              </button>
+            }
+          </div>
+        </div>
+        
+        <div class="code-container bg-dark text-light p-2 p-md-3 rounded overflow-auto">
+          <pre><code>{{fileContents[activeFile]}}</code></pre>
+        </div>
+        
+        <div class="mt-3 d-flex flex-wrap">
+          <button class="btn btn-primary me-2 mb-2" (click)="setActiveTab('hints')">
+            <i class="bi bi-lightbulb me-1"></i> Request Hints
+          </button>
+          <button class="btn btn-success mb-2" (click)="setActiveTab('answers')">
+            <i class="bi bi-question-circle me-1"></i> <span class="d-none d-sm-inline">Solution Options</span><span class="d-inline d-sm-none">Answers</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hints tab -->
+      <div *ngIf="activeTab === 'hints'" class="tab-content p-3 bg-light rounded">
+        <h3 class="fs-4">Hints</h3>
+        
+        <div *ngIf="!challenge.hints || challenge.hints.length === 0" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          There are no hints available for this challenge.
+        </div>
+        
+        <ng-container *ngIf="challenge.hints && challenge.hints.length > 0">
+          @if (currentHintIndex === -1) {
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>
+              Click "Next Hint" for assistance.
+            </div>
+          } @else {
+            <div class="list-group">
+              @for (i of getHintIndexes(); track i) {
+                <div class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Hint {{i + 1}}</h5>
+                  </div>
+                  <p class="mb-1">{{challenge.hints[i]}}</p>
+                </div>
+              }
+            </div>
+          }
+          
+          <div class="mt-3 d-flex flex-wrap">
+            <button 
+              class="btn btn-primary me-2 mb-2" 
+              (click)="showNextHint()" 
+              [disabled]="challenge.hints && currentHintIndex >= challenge.hints.length - 1">
+              <i class="bi bi-lightbulb me-1"></i> Next Hint
+            </button>
+            <button class="btn btn-outline-secondary me-2 mb-2" (click)="resetHints()">
+              <i class="bi bi-arrow-repeat me-1"></i> Reset Hints
+            </button>
+            <button class="btn btn-success mb-2" (click)="setActiveTab('answers')">
+              <i class="bi bi-question-circle me-1"></i> <span class="d-none d-sm-inline">Solution Options</span><span class="d-inline d-sm-none">Answers</span>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Solution options tab -->
+      <div *ngIf="activeTab === 'answers'" class="tab-content p-3 bg-light rounded">
+        <h3 class="fs-4">Select the Correct Solution</h3>
+        
+        <div *ngIf="!challenge.options || challenge.options.length === 0" class="alert alert-warning my-3">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          There are no answer options available for this challenge.
+        </div>
+        
+        <div class="list-group mt-3" *ngIf="challenge.options && challenge.options.length > 0">
+          @for (option of challenge.options; track $index) {
+            <button 
+              class="list-group-item list-group-item-action mb-2 p-2 p-md-3" 
+              [class.active]="selectedOption === $index"
+              [class.list-group-item-success]="selectedOption === $index && isCorrectAnswer"
+              [class.list-group-item-danger]="selectedOption === $index && !isCorrectAnswer"
+              (click)="selectOption($index)">
+              <div class="d-flex align-items-start">
+                <div class="me-2 mt-1">
+                  <span class="badge rounded-pill bg-secondary">{{$index + 1}}</span>
+                </div>
+                <div>
+                  {{option}}
+                </div>
+              </div>
+            </button>
+          }
+        </div>
+
+        <div class="mt-3">
+          @if (selectedOption !== null) {
+            <div class="alert mb-2" [class.alert-success]="isCorrectAnswer" [class.alert-danger]="!isCorrectAnswer">
+              <i class="bi" [class.bi-check-circle-fill]="isCorrectAnswer" [class.bi-x-circle-fill]="!isCorrectAnswer"></i>
+              <span class="ms-2">{{ isCorrectAnswer ? 'Correct Answer!' : 'Incorrect Answer!' }}</span>
+            </div>
+            <button class="btn btn-success" (click)="setActiveTab('solution')">
+              <i class="bi bi-check-circle me-1"></i> View Solution
+            </button>
+          } @else {
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>
+              Select an answer option before viewing the detailed solution.
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Solution tab -->
+      <div *ngIf="activeTab === 'solution'" class="tab-content p-3 bg-light rounded">
+        <h3 class="fs-4">Solution</h3>
+        
+        <div class="alert alert-success">
+          <i class="bi bi-check-circle me-2"></i>
+          {{challenge.solution}}
+        </div>
+        
+        <div class="mt-4 d-flex flex-wrap">
+          <button class="btn btn-primary me-2 mb-2" (click)="nextChallenge()">
+            <i class="bi bi-arrow-right-circle me-1"></i> Next Challenge
+          </button>
+          <button class="btn btn-outline-secondary mb-2" (click)="goToList()">
+            <i class="bi bi-list me-1"></i> Back to List
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="container my-5" *ngIf="isLoading">
+  <div class="text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading challenge...</p>
+  </div>
+</div>
+
+<!-- Error state -->
+<div class="container my-5" *ngIf="hasError">
+  <div class="text-center">
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      An error occurred while loading the challenge
+    </div>
+    <button class="btn btn-primary mt-3" (click)="loadRandomChallenge()">
+      <i class="bi bi-arrow-repeat me-2"></i>
+      Retry
+    </button>
+    <button class="btn btn-outline-secondary mt-3 ms-2" (click)="goToList()">
+      <i class="bi bi-list me-2"></i>
+      Back to List
+    </button>
+  </div>
+</div>
+
+<!-- Challenge not found -->
+<div class="container my-5" *ngIf="!isLoading && !hasError && !challenge">
+  <div class="text-center">
+    <div class="alert alert-warning">
+      <i class="bi bi-search me-2"></i>
+      The requested challenge could not be found
+    </div>
+    <button class="btn btn-primary mt-3" (click)="loadRandomChallenge()">
+      <i class="bi bi-shuffle me-2"></i>
+      Random Challenge
+    </button>
+    <button class="btn btn-outline-secondary mt-3 ms-2" (click)="goToList()">
+      <i class="bi bi-list me-2"></i>
+      Back to List
+    </button>
+  </div>
+</div>

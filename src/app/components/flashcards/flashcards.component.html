@@ -1,0 +1,244 @@
+<div class="container my-5">
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1>{{ getFrameworkName() }} Flashcards</h1>
+      <p class="lead">Learn {{ getFrameworkName() }} concepts and terminology with interactive flashcards!</p>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-12 col-md-5 mb-3 mb-md-0">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Search..." 
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="filterCards()">
+        <button class="btn btn-outline-secondary" type="button" (click)="searchTerm = ''; filterCards()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    </div>
+    <div class="col-12 col-md-3 mb-3 mb-md-0">
+      <select class="form-select" [(ngModel)]="selectedCategory" (change)="filterCards()">
+        <option value="all">All categories</option>
+        @for (category of categories; track category) {
+          <option [value]="category">{{category}}</option>
+        }
+      </select>
+    </div>
+    <div class="col-12 col-md-3 mb-3 mb-md-0">
+      <select class="form-select" [(ngModel)]="selectedDifficulty" (change)="filterCards()">
+        <option value="all">All difficulties</option>
+        @for (difficulty of difficulties; track difficulty) {
+          <option [value]="difficulty.value">{{difficulty.label}}</option>
+        }
+      </select>
+    </div>
+    <div class="col-12 col-md-1 d-flex align-items-center">
+      <button class="btn btn-sm btn-outline-secondary w-100" (click)="clearFilters()">
+        <i class="bi bi-arrow-repeat"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-3">Loading {{ getFrameworkName() }} flashcards...</p>
+    </div>
+  }
+  
+  @if (!isLoading && filteredFlashcards.length === 0) {
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle me-2"></i>
+      No {{ getFrameworkName() }} flashcards match your filter criteria.
+    </div>
+  }
+
+  @if (!isLoading && filteredFlashcards.length > 0) {
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge bg-primary me-2">{{cardIndex + 1}}/{{filteredFlashcards.length}}</span>
+              @if (currentCard) {
+                <span [class]="getDifficultyClass(currentCard.difficulty)">
+                  {{ currentCard.difficulty === 'beginner' ? 'Beginner' : 
+                    currentCard.difficulty === 'intermediate' ? 'Intermediate' : 'Advanced' }}
+                </span>
+                <span class="badge bg-secondary ms-2">{{currentCard.category}}</span>
+              }
+            </div>
+            <div>
+              @if (!isCardDeckMode) {
+                <button class="btn btn-outline-primary btn-sm me-1" (click)="previousCard()" 
+                  [disabled]="filteredFlashcards.length <= 1">
+                  <i class="bi bi-arrow-left"></i>
+                </button>
+                <button class="btn btn-outline-primary btn-sm me-1" (click)="nextCard()" 
+                  [disabled]="filteredFlashcards.length <= 1">
+                  <i class="bi bi-arrow-right"></i>
+                </button>
+                <button class="btn btn-outline-primary btn-sm me-3" (click)="getRandomCard()" 
+                  [disabled]="filteredFlashcards.length <= 1">
+                  <i class="bi bi-shuffle"></i>
+                </button>
+                <button class="btn btn-success btn-sm" (click)="startCardDeckMode()">
+                  <i class="bi bi-play-fill"></i> Practice
+                </button>
+              } @else {
+                <span class="me-3">
+                  <i class="bi bi-check-circle text-success me-1"></i> {{correctAnswers}}
+                  <i class="bi bi-x-circle text-danger ms-2 me-1"></i> {{incorrectAnswers}}
+                </span>
+                <span class="me-2">Remaining: {{remainingCards.length}}</span>
+                <button class="btn btn-outline-danger btn-sm" (click)="exitCardDeckMode()">
+                  <i class="bi bi-stop-fill"></i> Exit
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (!isLoading && currentCard) {
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="flashcard-container mb-4" (click)="flipCard()">
+          <div class="flashcard" [class.flipped]="isFlipped">
+            <div class="flashcard-front">
+              <div class="flashcard-content">
+                <h3>{{currentCard.question}}</h3>
+              </div>
+              <div class="flashcard-footer">
+                <small>Click the card to see the answer</small>
+              </div>
+            </div>
+            <div class="flashcard-back">
+              <div class="flashcard-content">
+                <h4>Answer:</h4>
+                <p>{{currentCard.answer}}</p>
+                
+                @if (currentCard.codeExample) {
+                  <div class="code-example mt-3">
+                    <h5>Code example:</h5>
+                    <pre><code>{{currentCard.codeExample}}</code></pre>
+                  </div>
+                }
+                
+                @if (currentCard.explanation) {
+                  <div class="explanation mt-3">
+                    <h5>Explanation:</h5>
+                    <p>{{currentCard.explanation}}</p>
+                  </div>
+                }
+              </div>
+              <div class="flashcard-footer">
+                <small>Click the card to see the question again</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        @if (isCardDeckMode && isFlipped) {
+          <div class="d-flex justify-content-center mt-3 mb-5">
+            <button class="btn btn-danger me-3" (click)="markIncorrect()">
+              <i class="bi bi-x-lg me-1"></i> Didn't know
+            </button>
+            <button class="btn btn-success" (click)="markCorrect()">
+              <i class="bi bi-check-lg me-1"></i> Knew it
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<style>
+  .flashcard-container {
+    perspective: 1000px;
+    cursor: pointer;
+  }
+  
+  .flashcard {
+    position: relative;
+    height: 350px;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 10px;
+  }
+  
+  .flashcard.flipped {
+    transform: rotateY(180deg);
+  }
+  
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .flashcard-front {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+  }
+  
+  .flashcard-back {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    transform: rotateY(180deg);
+    overflow: auto;
+  }
+  
+  .flashcard-content {
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .flashcard-footer {
+    padding: 1rem;
+    background-color: rgba(0,0,0,0.05);
+    text-align: center;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+  
+  .code-example {
+    width: 100%;
+    background-color: #212529;
+    color: #f8f9fa;
+    border-radius: 5px;
+    padding: 1rem;
+    text-align: left;
+    overflow-x: auto;
+  }
+  
+  .code-example pre {
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    .flashcard {
+      height: 450px;
+    }
+  }
+</style>

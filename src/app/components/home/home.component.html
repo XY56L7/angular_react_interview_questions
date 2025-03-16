@@ -1,0 +1,51 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-12 text-center">
+      <h1 class="display-4 mb-3">Welcome to the {{ currentFramework === 'angular' ? 'Angular' : 'React' }} Bug Bounty Application!</h1>
+      <p class="lead mb-5">
+        Develop your {{ currentFramework === 'angular' ? 'Angular' : 'React' }} skills by fixing real-world bugs. Find, analyze, and fix common {{ currentFramework === 'angular' ? 'Angular' : 'React' }} bugs!
+      </p>
+      
+      <div class="d-flex flex-column flex-md-row justify-content-center gap-3 mb-5">
+        <button class="btn btn-primary btn-lg" routerLink="/challenges">
+          <i class="bi bi-list-check me-2"></i>Challenge List
+        </button>
+        <button class="btn btn-outline-primary btn-lg" (click)="navigateToRandomChallenge()">
+          <i class="bi bi-shuffle me-2"></i>Random Challenge
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-bug-fill text-danger fs-1 mb-3"></i>
+          <h2 class="h4">Find the Bug</h2>
+          <p>Each challenge contains problematic {{ currentFramework === 'angular' ? 'Angular' : 'React' }} code. The first step is to locate exactly where the bug is!</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-12 col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-search text-primary fs-1 mb-3"></i>
+          <h2 class="h4">Analyze the Problem</h2>
+          <p>Use {{ currentFramework === 'angular' ? 'Angular' : 'React' }} error messages, hints, and documentation to understand why the code isn't working.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-12 col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <i class="bi bi-wrench-adjustable text-success fs-1 mb-3"></i>
+          <h2 class="h4">Fix It</h2>
+          <p>Choose the correct solution from the options to prove that you understand the root of the problem!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

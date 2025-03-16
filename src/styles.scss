@@ -1,1 +1,148 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+/* Mobilbarát alap stílusok */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 60px; /* Fix navbar magasságának helyet biztosít */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobilnézet beállításai */
+@media (max-width: 576px) {
+  .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3, h4 {
+    font-size: 1.2rem;
+  }
+  
+  .card {
+    margin-bottom: 15px;
+  }
+  
+  .code-container {
+    max-height: 300px;
+  }
+  
+  .lead {
+    font-size: 1rem;
+  }
+  
+  pre {
+    font-size: 0.85rem;
+    overflow: auto;
+  }
+}
+
+/* Kódrészlet konténer stílusai */
+.code-container {
+  overflow: auto;
+  max-height: 450px;
+  border-radius: 0.25rem;
+}
+
+pre {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Gomb csoportok margin javítás */
+.btn-group .btn {
+  margin-right: 2px;
+}
+
+/* Tabnavigáció reszponzív beállítások */
+@media (max-width: 768px) {
+  .nav-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  
+  .nav-tabs .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+  
+  .tab-content {
+    padding: 1rem;
+  }
+}
+
+/* Aktív nav link stílus */
+.navbar .nav-link.active {
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+}
+
+/* Segédosztályok */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Típus badge színek */
+.bg-primary-light {
+  background-color: #cfe2ff;
+  color: #0d6efd;
+}
+
+.bg-success-light {
+  background-color: #d1e7dd;
+  color: #198754;
+}
+
+.bg-warning-light {
+  background-color: #fff3cd;
+  color: #ffc107;
+}
+
+.bg-danger-light {
+  background-color: #f8d7da;
+  color: #dc3545;
+}
+
+/* Mobilos bootstrap módosítások */
+@media (max-width: 576px) {
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  .mt-5 {
+    margin-top: 2rem !important;
+  }
+  
+  .mb-5 {
+    margin-bottom: 2rem !important;
+  }
+  
+  .py-5 {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+  }
+}

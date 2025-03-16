@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top shadow">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <img *ngIf="currentFramework === 'angular'" src="assets/angular-logo.png" alt="Angular" class="framework-logo">
+      <img *ngIf="currentFramework === 'react'" src="assets/react-logo.png" alt="React" class="framework-logo">
+      {{currentFramework === 'angular' ? 'Angular' : 'React'}} Interview Prep
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+            <i class="bi bi-house me-1"></i> Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/challenges" routerLinkActive="active">
+            <i class="bi bi-list-check me-1"></i> Challenges
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/flashcards" routerLinkActive="active">
+            <i class="bi bi-card-text me-1"></i> Flashcards
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/knowledge-base" routerLinkActive="active">
+            <i class="bi bi-book me-1"></i> Knowledge Base
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="navigateToRandomChallenge()" style="cursor: pointer;">
+            <i class="bi bi-shuffle me-1"></i> Random Challenge
+          </a>
+        </li>
+        <li class="nav-item framework-toggle">
+          <a class="nav-link" (click)="toggleFramework()" style="cursor: pointer;">
+            <div class="toggle-container d-flex align-items-center" [attr.title]="getToggleTooltip()">
+              <img *ngIf="currentFramework === 'angular'" src="assets/angular-logo.png" alt="Angular" class="toggle-logo me-1">
+              <img *ngIf="currentFramework === 'react'" src="assets/react-logo.png" alt="React" class="toggle-logo me-1">
+              <span>Switch to {{currentFramework === 'angular' ? 'React' : 'Angular'}}</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
