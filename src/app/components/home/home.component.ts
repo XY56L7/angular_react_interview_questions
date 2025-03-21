@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ChallengeService } from '../../services/challenge.service';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,7 @@ import { Framework, FrameworkToggleService } from '../../services/framework-togg
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
