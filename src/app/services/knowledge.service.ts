@@ -251,7 +251,7 @@ function Greeting({ message, user }) {
 }
 
 export default Greeting;
-// Usage: <Greeting message="Hi there" user={{ name: "Alex" }} />
+
           `
         }
       ],
@@ -323,7 +323,7 @@ function DataFetcher() {
     }
     
     fetchData();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
   
   if (loading) return <p>Loading...</p>;
   if (!data) return <p>No data found</p>;
@@ -369,10 +369,8 @@ function DataFetcher() {
           code: `
 import React, { createContext, useContext, useState } from 'react';
 
-// Create a context
 const ThemeContext = createContext();
 
-// Provider component
 function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('light');
   
@@ -380,7 +378,6 @@ function ThemeProvider({ children }) {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
   
-  // The value prop contains what we want to share
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
@@ -388,7 +385,6 @@ function ThemeProvider({ children }) {
   );
 }
 
-// Consumer component
 function ThemedButton() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   
@@ -405,7 +401,6 @@ function ThemedButton() {
   );
 }
 
-// App
 function App() {
   return (
     <ThemeProvider>
@@ -448,7 +443,6 @@ function App() {
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
-// Pages
 const Home = () => <h2>Home Page</h2>;
 const About = () => <h2>About Page</h2>;
 const NotFound = () => <h2>404: Page Not Found</h2>;
@@ -510,13 +504,11 @@ function App() {
           code: `
 import React from 'react';
 
-// Without memoization - will re-render on every parent render
 function RegularComponent({ name }) {
   console.log('RegularComponent rendered');
   return <div>Hello, {name}</div>;
 }
 
-// With memoization - only re-renders if props change
 const MemoizedComponent = React.memo(function MemoizedComponent({ name }) {
   console.log('MemoizedComponent rendered');
   return <div>Hello, {name}</div>;
@@ -547,17 +539,12 @@ function ExpensiveCalculationDemo() {
   const [count, setCount] = useState(0);
   const [text, setText] = useState('');
   
-  // Without useMemo - would recalculate on every render
-  // const expensiveResult = computeExpensiveValue(count);
-  
-  // With useMemo - only recalculates when count changes
+
   const expensiveResult = useMemo(() => {
     console.log('Computing expensive result...');
-    // Simulating expensive calculation
     return count * 2 * Math.sqrt(count);
   }, [count]);
   
-  // With useCallback - function reference stays the same
   const handleIncrement = useCallback(() => {
     setCount(c => c + 1);
   }, []);
@@ -644,7 +631,6 @@ function useFetch(url) {
   return data;
 }
 
-// Usage
 function MyComponent() {
   const data = useFetch('https://api.example.com');
   return <pre>{JSON.stringify(data)}</pre>;
@@ -919,7 +905,7 @@ function Search() {
     const value = e.target.value;
     setQuery(value);
     startTransition(() => {
-      setResults(search(value)); // Expensive operation
+      setResults(search(value));
     });
   };
 
@@ -951,9 +937,8 @@ function Search() {
         {
           title: 'Server Component (Experimental)',
           code: `
-// Note: Requires a framework like Next.js 13+
 function Profile({ userId }) {
-  const user = db.getUser(userId); // Direct DB access on server
+  const user = db.getUser(userId);
   return <h1>{user.name}</h1>;
 }
 
@@ -1115,7 +1100,7 @@ export class TruncatePipe implements PipeTransform {
     return value.length > limit ? value.substring(0, limit) + '...' : value;
   }
 }
-// Usage: {{ text | truncate:10 }}
+
 `
         }
       ],
@@ -1213,7 +1198,6 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   ]
 })
 export class FadeComponent {
-  // Template: <div [@fade]>Content</div>
 }`
         }
       ],
@@ -1531,13 +1515,11 @@ export class CardComponent {}
           code: `
 ng generate web-worker my-worker
 
-// my-worker.worker.ts
 addEventListener('message', ({ data }) => {
   const result = heavyComputation(data);
   postMessage(result);
 });
 
-// Component
 const worker = new Worker(new URL('./my-worker.worker', import.meta.url));
 worker.onmessage = ({ data }) => console.log(data);
 worker.postMessage(42);`
@@ -1578,7 +1560,7 @@ export class HighlightDirective {
   }
 }
 
-// Usage: <p appHighlight>Text</p>`
+`
         }
       ],
       relatedLinks: [
@@ -1604,7 +1586,7 @@ export class HighlightDirective {
           code: `
 <h1 i18n="@@greeting">Hello, world!</h1>
 
-// Extract: ng extract-i18n`
+`
         }
       ],
       relatedLinks: [
@@ -1628,7 +1610,6 @@ export class HighlightDirective {
         {
           title: 'Module Federation Setup',
           code: `
-// webpack.config.js
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 
 module.exports = {
@@ -1960,7 +1941,6 @@ ng generate component my-component --standalone`
         {
           title: 'Module Federation Config',
           code: `
-    // webpack.config.js
     const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
     
     module.exports = {

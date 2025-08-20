@@ -11,7 +11,6 @@ export class FrameworkToggleService {
   currentFramework$: Observable<Framework> = this.frameworkSubject.asObservable();
 
   constructor() {
-    // Try to load last selected framework from localStorage
     const savedFramework = localStorage.getItem('selectedFramework') as Framework;
     if (savedFramework && (savedFramework === 'angular' || savedFramework === 'react')) {
       this.frameworkSubject.next(savedFramework);
